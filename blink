@@ -1,0 +1,24 @@
+#!/bin/bash
+
+ENDPOINT=${BLINK_ENDPOINT:="http://127.0.0.1:8934"}
+
+SUCCESS_COLOR=${BLINK_SUCCESS_COLOR:="00ff00"}
+PROGRESS_COLOR=${BLINK_PROGRESS_COLOR:="ffcc00"}
+ERROR_COLOR=${BLINK_ERROR_COLOR:="ff0000"}
+
+function set_color {
+    curl -s "{$ENDPOINT}/blink1/fadeToRGB?rgb=%23{$1}" > /dev/null
+}
+
+function quit {
+    if [ $1 == 0 ]; then
+        set_color $SUCCESS_COLOR
+    else
+        set_color $ERROR_COLOR
+    fi
+    exit $1
+}
+
+set_color $PROGRESS_COLOR
+eval "$@" || quit 1
+quit 0
